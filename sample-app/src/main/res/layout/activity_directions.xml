@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkmediumindigo"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    tools:context=".Directions">
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/arrow_down_200"
+        android:paddingBottom="50dp"
+        android:contentDescription="Cofnij się"
+        ></ImageView>
+
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/arvo"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:keepScreenOn="true"
+        android:text="Cofnij się"
+        android:textStyle="bold"
+        android:textColor="@color/lightindigo"
+        android:textSize="20pt" />
+
+</LinearLayout>

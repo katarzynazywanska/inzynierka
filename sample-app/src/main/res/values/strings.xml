@@ -28,7 +28,7 @@
   Check BackgroundScanActivity class for implementation.
   </string>
 
-  <string name="foreground_scan_description">This sample presents how to achieve beacons scanning using Android\'s Foreground Service\n\n
+    <string name="foreground_scan_description">This sample presents how to achieve beacons scanning using Android\'s Foreground Service\n\n
     Service will run until user stops it explicitly by clicking stop button. Beacons will be scanned even if app is not in the foreground.\n\n
     During the scan a broadcast is sent whenever a device is discovered. Activity is registered for those broadcasts and displays scanning results.\n\n
   Check ForegroundScanActivity class for implementation.
@@ -56,5 +56,24 @@
     <string name="request_devices">Get devices</string>
     <string name="request_configs">Get configs</string>
     <string name="request_managers">Get managers</string>
+    <string name="title_activity_entry">Entry</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
 </resources>
