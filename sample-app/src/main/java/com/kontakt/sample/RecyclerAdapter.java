@@ -49,6 +49,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             public void onClick(View v) {
                 soundAndColor(holder);
                 Intent intent = new Intent(context, Directions.class);
+                intent.putExtra("cel", data[holder.getAdapterPosition()]);
                 context.startActivity(intent);
             }
         });

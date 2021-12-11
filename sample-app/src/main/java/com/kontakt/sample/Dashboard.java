@@ -18,7 +18,7 @@ RecyclerAdapter adapter;
 LinearLayout linearLayout;
 ImageView imageView;
 
-String rooms[] = {"Pokój 235", "Pokój 236", "Pokój 237", "Pokój 238", "Pokój 239", "Pokój 240", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241"};
+String rooms[] = {"Pokój", "Przejście", "Kuchnia", "Wyjście", "Łazienka", "Pokój 240", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241", "Pokój 241"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

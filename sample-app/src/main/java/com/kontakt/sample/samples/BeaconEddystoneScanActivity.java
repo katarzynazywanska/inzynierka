@@ -60,6 +60,7 @@ public class BeaconEddystoneScanActivity extends AppCompatActivity implements Vi
     myTextView =  (TextView) findViewById(R.id.myTextView);
     myTextView2 =  (TextView) findViewById(R.id.myTextView2);
     myTextView3 =  (TextView) findViewById(R.id.myTextView3);
+
     ///////////////////////////////////////////////////////////////
 
     //Setup Toolbar
@@ -146,9 +147,8 @@ public class BeaconEddystoneScanActivity extends AppCompatActivity implements Vi
         double power0 = iBeacons.get(0).getTxPower();
         double n = 2;
         double distance0 = Math.pow(10,((power0 - rssi0)/(10*n)));
-
         //myTextView.setText("2 onIBeaconsUpdated: "+ iBeacons.get(0).getProximity() + "\ndistance = " + distance+ " meters");
-        myTextView.setText(iBeacons.get(0).getMinor() +" 0  RSSI:"+iBeacons.get(0).getRssi()+"  TxPower:"+iBeacons.get(0).getTxPower() + "\ndistance = " + distance0+ " meters" + "\ntimestamp " + iBeacons.get(0).getTimestamp() + "\n distanece " + iBeacons.get(0).getDistance());
+        myTextView.setText(iBeacons.get(0).getMinor() +" 0  RSSI:"+iBeacons.get(0).getRssi()+"  TxPower:"+iBeacons.get(0).getTxPower() + "\ndistance = " + distance0+ " meters" + "\ntimestamp " + iBeacons.get(0).getTimestamp() + "\n distanece " + iBeacons.get(0).getDistance()+ "\nname " + iBeacons.get(0).getName());
 
         if(iBeacons.size() == 2) {
           double rssi1 = iBeacons.get(1).getRssi();

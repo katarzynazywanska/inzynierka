@@ -27,7 +27,7 @@
                     android:fontFamily="@font/arvo"
                     android:text="Pokój 236"
                     android:textColor="@color/black"
-                    android:textSize="12pt"
+                    android:textSize="14sp"
                     android:background="?android:attr/selectableItemBackground"></TextView>
 
         </androidx.cardview.widget.CardView>
