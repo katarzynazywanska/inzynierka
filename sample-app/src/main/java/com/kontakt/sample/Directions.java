@@ -27,6 +27,7 @@ import com.kontakt.sdk.android.ble.manager.listeners.IBeaconListener;
 import com.kontakt.sdk.android.common.profile.IBeaconDevice;
 import com.kontakt.sdk.android.common.profile.IBeaconRegion;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -108,6 +109,14 @@ public class Directions extends AppCompatActivity {
                 if (iBeacons.size() >= 2){
                     Log.i("beaconList" , iBeacons.get(1).getMinor() + "   RSSI:"+iBeacons.get(1).getRssi());
                     Log.i("nearestBeacon" , " " + getNearestBeacon(iBeacons));
+                }
+
+
+                if (iBeacons.size() >= 1){
+                    LinkedList<Integer> path =  beaconList.findPath(getNearestBeacon(iBeacons), beaconList.getKey(roomName));
+                    for (int i = 0; i < path.size(); i++){
+                        Log.i("findPath", i+" "+ path.get(i).toString());
+                    }
                 }
 
                 Log.i(TAG, "onIBeaconsUpdated: " + iBeacons.size());
