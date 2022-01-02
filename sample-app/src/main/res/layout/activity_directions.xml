@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkmediumindigo"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    tools:context=".Directions">
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/clear_200"
+        android:paddingBottom="50dp"
+        android:contentDescription="Wskazówka"
+        ></ImageView>
+
+    <TextView
+        android:id="@+id/directionsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/arvo"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:keepScreenOn="true"
+        android:text="Zaczekaj na wskazówki"
+        android:textStyle="bold"
+        android:textColor="@color/lightindigo"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_marginTop="40dp"
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/arvo"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:keepScreenOn="true"
+        android:text=""
+        android:textStyle="bold"
+        android:textColor="@color/lightindigo"
+        android:textSize="15sp" />
+
+</LinearLayout>

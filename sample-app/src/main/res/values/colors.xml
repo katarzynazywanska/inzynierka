@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="grey">#8c9eff</color>
+
+
+    <color name="lightlightindigo">#ffffff</color>
+    <color name="lightmediumindigo">#e8eaf6</color>
+    <color name="lightdarkindigo">#b6b8c3</color>
+
+    <color name="lightindigo">#f8fdff</color> //text color
+    <color name="mediumindigo">#c5cae9</color>
+    <color name="darkindigo">#9499b7</color>
+
+    <color name="darklightindigo">#A7A2E2</color> //second text color
+    <color name="darkdarkindigo">#000051</color>
+    <color name="darkmediumindigo">#1a237e</color> //background color
+    <color name="contrast_to_background">#363636</color>
+
+    <color name="lightblue">#c0cfff</color>
+    <color name="darkblue">#5870cb</color>
+    <color name="mediumblue">#8c9eff</color>
+    <color name="verydarkblue">#000033</color> //menu color
+
+
+    <color name="primaryColorDark">#1a237e</color> //android menu color
+    <color name="primaryColor">#f8fdff</color>
+
+    <color name="grey1">#f8fdff</color>
+    <color name="primaryColorDark1">#ff28bc12</color>
+    <color name="primaryColor1">#61BC47</color>
+    <color name="accentColor">#373B60</color>
+    <color name="greyblue">#cfd8dc</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
+</resources>

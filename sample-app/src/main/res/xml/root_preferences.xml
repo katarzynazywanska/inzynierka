@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="Wielkość czcionki">
+
+        <ListPreference
+            app:key="fontSize"
+            app:title="Wybierz wielkość czcionki"
+            app:entries="@array/font_sizes"
+            app:entryValues="@array/font_sizes_values"
+            app:defaultValue="Normalna"
+            app:useSimpleSummaryProvider="true"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>
