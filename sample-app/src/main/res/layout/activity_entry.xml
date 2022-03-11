@@ -14,25 +14,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/darkmediumindigo"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/moje_logo_3"
-            android:contentDescription="Logo aplikacji"
-            ></ImageView>
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
         <TextView
+
             android:id="@+id/fullscreen_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:fontFamily="@font/arvo"
             android:gravity="center"
             android:keepScreenOn="true"
-            android:text="Nawigacja \w budynku"
+            android:text="Nawigacja \n w budynku"
             android:textColor="@color/lightindigo"
-            android:textSize="24pt"
-            android:fontFamily="@font/arvo"/>
+            android:textSize="40sp"/>
+
+        <ImageView
+            android:id="@+id/imgView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Logo aplikacji"
+            android:src="@drawable/moje_logo_3" />
+
     </LinearLayout>
 </RelativeLayout>

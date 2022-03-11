@@ -8,7 +8,7 @@
 
     <string-array name="font_sizes_values">
         <item>1</item>
+        <item>1.5</item>
         <item>2</item>
-        <item>3</item>
     </string-array>
 </resources>

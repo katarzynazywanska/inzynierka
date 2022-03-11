@@ -4,19 +4,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginLeft="5dp"
+    android:padding="8sp"
+    android:layout_marginRight="5sp"
+    android:layout_marginLeft="5sp"
     android:background="?android:attr/selectableItemBackground"
     >
 
         <androidx.cardview.widget.CardView
             android:id="@+id/myCardView"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="60sp"
             app:cardBackgroundColor="@color/mediumindigo"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp"
+            app:cardCornerRadius="12sp"
+            app:cardElevation="10sp"
             >
 
                 <TextView
@@ -27,7 +27,7 @@
                     android:fontFamily="@font/arvo"
                     android:text="Pokój 236"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     android:background="?android:attr/selectableItemBackground"></TextView>
 
         </androidx.cardview.widget.CardView>

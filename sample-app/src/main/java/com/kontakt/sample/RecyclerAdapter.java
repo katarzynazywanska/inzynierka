@@ -96,8 +96,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void changeFontSize( @NonNull RecyclerAdapter.ViewHolder holder){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String fontSize = sharedPreferences.getString("fontSize", "1");
-        int fontSizeVal = Integer.parseInt(fontSize);
-        holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,fontSizeVal*15);
+        double fontSizeVal = Double.parseDouble(fontSize);
+        //int fontSizeVal = Integer.parseInt(fontSize);
+        holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,(float) Math.ceil(fontSizeVal*18));
     }
 
 }

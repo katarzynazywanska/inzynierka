@@ -5,19 +5,33 @@ import android.annotation.SuppressLint;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class Entry extends AppCompatActivity {
+    WifiManager wifiManager;
+    TextView fullscreen_content;
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -28,7 +42,7 @@ public class Entry extends AppCompatActivity {
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
      */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+    private static final int AUTO_HIDE_DELAY_MILLIS = 4000;
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -106,24 +120,54 @@ public class Entry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_entry);
+        fullscreen_content = findViewById(R.id.fullscreen_content);
 
         mVisible = true;
         //mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
-
-
-        int TIME_OUT = 2000; //Time to launch the another activity
         setContentView(R.layout.activity_entry);
-        final View myLayout = findViewById(R.id.fullscreen_content);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent i = new Intent(Entry.this, Dashboard.class);
-                startActivity(i);
-                finish();
-            }
-        }, TIME_OUT);
 
+        /*if (!isNetworkAvailable() ) {
+            Toast.makeText(Entry.this, "Brak dostępu do Internetu. Uaktywnij usługę, aby zacząć korzystać z aplikacji.", Toast.LENGTH_LONG).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Intent panelIntent = new Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
+                startActivityForResult(panelIntent, 545);
+            }
+        }*/
+
+        //fullscreen_content.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        fullscreen_content.requestFocus();
+        fullscreen_content.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+
+        boolean checkInternetConnection = true;
+        boolean toast = true;
+        while (checkInternetConnection) {
+            if (!isNetworkAvailable() && toast) {
+                Toast.makeText(Entry.this, "Brak dostępu do Internetu. Uaktywnij usługę, aby zacząć korzystać z aplikacji.", Toast.LENGTH_LONG).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    Intent panelIntent = new Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
+                    startActivityForResult(panelIntent, 545);
+                }
+                toast = false;
+            } else if(isNetworkAvailable()){
+                checkInternetConnection = false;
+            }
+        }
+
+            int TIME_OUT = 2000; //Time to launch the another activity
+            final View myLayout = findViewById(R.id.fullscreen_content);
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    Intent i = new Intent(Entry.this, Dashboard.class);
+                    //Intent i = new Intent(Entry.this, EnableBluetoothAndLocation.class);
+                    startActivity(i);
+                    finish();
+                }
+            }, TIME_OUT);
+
+            changeFontSize();
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +182,14 @@ public class Entry extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+    }
+
+    public void changeFontSize(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String fontSize = sharedPreferences.getString("fontSize", "1");
+        double fontSizeVal = Double.parseDouble(fontSize);
+        //int fontSizeVal = Integer.parseInt(fontSize);
+        fullscreen_content.setTextSize(TypedValue.COMPLEX_UNIT_SP,(float) Math.ceil(fontSizeVal*40));
     }
 
     @Override
@@ -196,4 +248,20 @@ public class Entry extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    public Boolean isNetworkAvailable(){
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = null;
+
+            if(connectivityManager != null){
+                networkInfo = connectivityManager.getActiveNetworkInfo();
+            }
+            return networkInfo != null && networkInfo.isConnected();
+        } catch (NullPointerException e){
+            return false;
+        }
+
+    }
+
 }

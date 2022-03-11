@@ -29,19 +29,4 @@
         <item name="android:background">@color/verydarkblue</item>
         <item name="android:textSize">20sp</item>
     </style>
-
-    <style name="HeaderNormal">
-        <item name="android:textSize">18sp</item>
-        <item name="fontFamily">@font/arvo</item>
-    </style>
-
-    <style name="HeaderNormalBig">
-        <item name="android:textSize">27sp</item>
-        <item name="fontFamily">@font/arvo</item>
-    </style>
-
-    <style name="HeaderNormalBigger">
-        <item name="android:textSize">36sp</item>
-        <item name="fontFamily">@font/arvo</item>
-    </style>
 </resources>

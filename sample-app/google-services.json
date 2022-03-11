@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "212702678553",
+    "project_id": "nawigacja-w-budynku",
+    "storage_bucket": "nawigacja-w-budynku.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212702678553:android:f1f14ab47caf618064e488",
+        "android_client_info": {
+          "package_name": "com.kontakt.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212702678553-osf52qub7cdhhm9dv3bvuos8ev0feqcc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnhA2wC7XrsVUHq5XYfdEXiyDTiGpS31o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212702678553-osf52qub7cdhhm9dv3bvuos8ev0feqcc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

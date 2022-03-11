@@ -9,16 +9,6 @@
     android:orientation="vertical"
     tools:context=".Directions">
 
-    <ImageView
-        android:id="@+id/arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/clear_200"
-        android:paddingBottom="50dp"
-        android:contentDescription="Wskazówka"
-        ></ImageView>
-
     <TextView
         android:id="@+id/directionsTextView"
         android:layout_width="wrap_content"
@@ -27,13 +17,25 @@
         android:gravity="center"
         android:layout_gravity="center"
         android:keepScreenOn="true"
-        android:text="Zaczekaj na wskazówki"
+        android:text="Zacznij się przemieszczać, aby uzyskać połączenie z najbliższym beacon'em"
         android:textStyle="bold"
         android:textColor="@color/lightindigo"
-        android:textSize="25sp" />
+        android:textSize="20sp"
+        android:focusable="true"
+
+/>
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/clear_200"
+        android:paddingTop="50sp"
+        android:contentDescription="Wskazówka" />
 
     <TextView
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="40sp"
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

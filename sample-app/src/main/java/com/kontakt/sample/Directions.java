@@ -11,6 +11,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -51,9 +54,11 @@ public class Directions extends AppCompatActivity {
     Boolean rememberPathFlag = true;
     String myPath = "";
     String startPathBeacon = "";
-    LinkedList<Integer> path;
-    Map<Integer, Boolean> proximityMap = new HashMap<>();
-    TextView myTextView;
+    LinkedList<String> path;
+    LinkedList<String> pathLive;
+    Map<String, Boolean> proximityMap = new HashMap<>();
+    //TextView myTextView;
+    String firstFoundBeacon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,21 +66,23 @@ public class Directions extends AppCompatActivity {
         setContentView(R.layout.activity_directions);
 
         imageView = findViewById(R.id.arrow);
-        myTextView =  (TextView) findViewById(R.id.textView);
+        //myTextView =  (TextView) findViewById(R.id.textView);
         directionsTextView =  (TextView) findViewById(R.id.directionsTextView);
+        directionsTextView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+
         setupProximityManager();
 
+        if (turnOnOffAnimation()) {
             Animation animation = AnimationUtils.loadAnimation(this, R.anim.blink_anim);
             //blink
             imageView.startAnimation(animation);
-
+        }
         startScanning();
         roomName =  getIntent().getStringExtra("cel");
         beaconList = new BeaconList();
-
+        pathLive = new LinkedList<String>();
         //change text size
         changeFontSize();
-        //directionsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
     }
 
     private void setupProximityManager() {
@@ -95,37 +102,41 @@ public class Directions extends AppCompatActivity {
     }
 
     private IBeaconListener createIBeaconListener() {
-
         return new IBeaconListener() {
             @Override
             public void onIBeaconDiscovered(IBeaconDevice iBeacon, IBeaconRegion region) {
-
                 Log.i(TAG, "onIBeaconDiscovered: " + /*iBeacon.toString()*/ " "+iBeacon.getProximity());
-                //myTextView.setText("1 onIBeaconDiscovered: " + iBeacon.toString());
             }
 
             @Override
             public void onIBeaconsUpdated(List<IBeaconDevice> iBeacons, IBeaconRegion region) {
 
+                if (iBeacons.size() >= 1) {
+
                 //remember Path
-                if ((iBeacons.size() >= 1) && rememberPathFlag) {
-                    rememberPathFlag = false;
-                    path = beaconList.findPath(getNearestBeacon(iBeacons), beaconList.getKey(roomName));
+                    if (rememberPathFlag) {
+                        rememberPathFlag = false;
 
-                    startPathBeacon = getBeaconRoomName(getNearestBeacon(iBeacons));
-                    Log.i("getKeyFun", "" + beaconList.getKey(roomName));
+                        //pathLive.add(firstFoundBeacon.toString());
+                        pathLive.add(getNearestBeacon(iBeacons));
+                        Log.d("pathLive", pathLive.toString());
 
-                    for (int i = path.size() - 1; i >= 0; i--) {
+                        path = beaconList.findPath(getNearestBeacon(iBeacons), beaconList.getKey(roomName));
+                        startPathBeacon = getBeaconRoomName(getNearestBeacon(iBeacons));
+                        Log.i("getKeyFun", "" + beaconList.getKey(roomName));
 
-                        //   fill proximityMap, if it value of proximity was immediate give true
-                        proximityMap.put(path.get(i), false);
 
-                        myPath += getBeaconRoomName(path.get(i)) + "\n";
-                        Log.i("findPath", i + " " + path.get(i).toString());
+                        setProximityMapFalse();
+                        //jak to niżej usunięte będzie to odkomentować linie powyżej
+                        /*for (int i = path.size() - 1; i >= 0; i--) {
+                            //   fill proximityMap, if it value of proximity was immediate give true
+                            proximityMap.put(path.get(i), false);
+                            myPath += getBeaconRoomName(path.get(i)) + "\n";
+                            Log.i("findPath", i + " " + path.get(i).toString());
+                        }*/
                     }
-                }
 
-                //beacon info display
+                    /*//beacon info display
                     String beaconsDistancesPrev = "";
                     String beaconsDistancesCur = "";
                     String ifCloser = "";
@@ -144,34 +155,33 @@ public class Directions extends AppCompatActivity {
                         //beaconsDistancesPrev += iBeacon.getMinor() + "  " + beaconList.beaconPreviousDistance.get(iBeacon.getMinor()) + "\n";
                         //ifCloser = "6823 " + beaconList.whetherUserApproached(6823).toString();
                         //ifCloser2 = "12880 " + beaconList.whetherUserApproached(12880).toString();
-                    }
+                    }*/
 
                     giveDirection(iBeacons);
-
-                    //text view info
-                    myTextView.setText("Idę z " + startPathBeacon + " do " + roomName + "\n\nDroga :\n " + myPath + "\n" + path.toString()+ "\n"
+                }
+                    /*//text view info
+                    myTextView.setText("Idę z " + startPathBeacon + " do " + roomName + "\n\nDroga :\n " + myPath + "\n" + path + "\n"
                             //*+ "\n" + ifCloser + "\n" + ifCloser2 + "\n\nCurrent\n " + beaconsDistancesCur + "\n\n" + "Previous\n" + beaconsDistancesPrev*//*
-                            + "\nProximity: \n" + returnProximity(iBeacons));
+                            + "\nProximity: \n" + returnProximity(iBeacons) +"\nCurrent: "+ getCurrentDirectionOfMovement()+"| Correct: "+ getCorrectDirectionOfMovement(path) + "\npathLive: \n" + pathLive.toString());
+                    */
             }
             
             @Override
             public void onIBeaconLost(IBeaconDevice iBeacon, IBeaconRegion region) {
-                //myTextView.setText("3 onIBeaconLost: " + iBeacon.toString());
-
                 Log.e(TAG, "onIBeaconLost: " + iBeacon.toString());
             }
         };
     }
 
-    public String returnProximity(List<IBeaconDevice> iBeacons){
+    /*public String returnProximity(List<IBeaconDevice> iBeacons){
         String prox = "";
         for (IBeaconDevice iBeacon: iBeacons) {
             prox += iBeacon.getMinor()+ " " + iBeacon.getProximity().toString() + " | dist: "+ (new DecimalFormat("##.##").format(iBeacon.getDistance())) + " | RSSI: " + iBeacon.getRssi()+ "\n";
         }
         return prox;
-    }
+    }*/
 
-    public Integer getNearestBeacon(List<IBeaconDevice> iBeacons){
+    public String getNearestBeacon(List<IBeaconDevice> iBeacons){
         Integer nearestBeacon = iBeacons.get(0).getMinor();
         double nearestDistance = iBeacons.get(0).getDistance();
 
@@ -181,12 +191,12 @@ public class Directions extends AppCompatActivity {
                 nearestDistance = iBeacon.getDistance();
             }
         }
-        return nearestBeacon;
+        return nearestBeacon.toString();
     }
 
-    public String getBeaconRoomName(int nearestBeaconMinor){
+    public String getBeaconRoomName(String nearestBeaconMinor){
         String roomsNames = "(";
-        for(Map.Entry map: beaconList.beaconRooms.get(nearestBeaconMinor).entrySet()){
+        for(Map.Entry map: beaconList.beaconRoomsDataBase.get(nearestBeaconMinor).entrySet()){
             roomsNames+= map.getKey()+"  ";
         }
         return roomsNames+")";
@@ -203,8 +213,6 @@ public class Directions extends AppCompatActivity {
                     return;
                 }
                 proximityManager.startScanning();
-
-                //Toast.makeText(Directions.this, "Scanning started", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -213,7 +221,6 @@ public class Directions extends AppCompatActivity {
         //Stop scanning if scanning is in progress
         if (proximityManager.isScanning()) {
             proximityManager.stopScanning();
-            //Toast.makeText(this, "Scanning stopped", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -235,27 +242,39 @@ public class Directions extends AppCompatActivity {
         switch (direction){
             case "prosto":
                 imageView.setImageResource(R.drawable.arrow_top_200);
-                imageView.setContentDescription("Idź prosto");
+                imageView.setContentDescription("Strzałka skierowana w górę");
                 directionsTextView.setText("Idź prosto");
+                //directionsTextView.setContentDescription("Idź prosto");
                 break;
             case "prawo":
                 imageView.setImageResource(R.drawable.arrow_right_200);
-                directionsTextView.setText("Wybrany cel jest po prawej stronie");
-                imageView.setContentDescription("Wybrany cel jest po prawej stronie");
-                waitAndGoBack();
+                directionsTextView.setText(roomName+"\nWybrany cel jest po prawej stronie");
+                imageView.setContentDescription("Strzałka skierowana w prawo");
+                //directionsTextView.setContentDescription("Wybrany cel jest po prawej stronie");
+                stopScanning();
+                //waitAndGoBack();
                 break;
             case "lewo":
                 imageView.setImageResource(R.drawable.arrow_left_200);
-                directionsTextView.setText("Wybrany cel jest po lewej stronie");
-                imageView.setContentDescription("Wybrany cel jest po lewej stronie");
-                waitAndGoBack();
+                directionsTextView.setText(roomName+"\nWybrany cel jest po lewej stronie");
+                imageView.setContentDescription("Strzałka skierowana w lewo");
+                //directionsTextView.setContentDescription("Wybrany cel jest po lewej stronie");
+                stopScanning();
+                //waitAndGoBack();
+                break;
+            case "zawróć":
+                imageView.setImageResource(R.drawable.arrow_down_200);
+                directionsTextView.setText("Zawróć");
+                imageView.setContentDescription("Strzałka skierowana w dół");
+                //directionsTextView.setContentDescription("Zawróć");
+                break;
         }
     }
 
     public IBeaconDevice returnBeaconByMinor(List<IBeaconDevice> iBeacons) {
-        for (int i = path.size(); i >= 0; i--) {
+        for (int i = path.size()-1; i >= 0; i--) {
             for (IBeaconDevice iBeacon : iBeacons) {
-                if (path.get(i) == iBeacon.getMinor()) {
+                if (path.get(i).equals( ((Integer)iBeacon.getMinor()).toString() )) {
                     return iBeacon;
                 }
             }
@@ -266,41 +285,58 @@ public class Directions extends AppCompatActivity {
     public void giveDirection (List<IBeaconDevice> iBeacons){
         for(int i=path.size()-1; i>=0; i--){
             for(IBeaconDevice iBeacon : iBeacons) {
-                if(iBeacon.getMinor() == path.get(i) && iBeacon.getProximity().toString().equals("IMMEDIATE")){
-                    if(proximityMap.get(iBeacon.getMinor()) == false){
-                        proximityMap.put(iBeacon.getMinor(),true);
+                if(((Integer)iBeacon.getMinor()).toString().equals(path.get(i)) && iBeacon.getProximity().toString().equals("IMMEDIATE")){
 
-                        if(iBeacon.getMinor()==path.get(0)){
-                            Log.i("6823","hello " + iBeacon.getMinor() +" "+ path.get(0));
-                            //funkcja do wyznaczania po której stronie jest pokój
-                            giveMorePreciseClue();
+                    if(!(getCurrentDirectionOfMovement().equals(getCorrectDirectionOfMovement(path))) && (pathLive.size() > 1)) {
+                        directionsInImgViewAndTxtView("zawróć");
+                        setProximityMapFalse();
+                    } else {
+
+                        if (proximityMap.get(((Integer) iBeacon.getMinor()).toString()) == false) {
+                            proximityMap.put(((Integer) iBeacon.getMinor()).toString(), true);
+                            if (((Integer) iBeacon.getMinor()).toString().equals(path.get(0))) {
+                                Log.i("6823", "hello " + iBeacon.getMinor() + " " + path.get(0));
+                                //funkcja do wyznaczania po której stronie jest pokój
+                                giveMorePreciseClue();
+                            } else if (i == path.size() - 1) {
+                                String fromDirection = beaconList.beaconNeighboursMapDataBase.get(path.get(i)).get(path.get(i - 1));
+                                String toDirection = beaconList.beaconNeighboursMapDataBase.get(path.get(i - 1)).get(path.get(i));
+                                directionsInImgViewAndTxtView(beaconList.giveDirections(fromDirection, toDirection));
+                            } else {
+                                String fromDirection = beaconList.beaconNeighboursMapDataBase.get(path.get(i)).get(path.get(i - 1));
+                                String toDirection = beaconList.beaconNeighboursMapDataBase.get(path.get(i)).get(path.get(i + 1));
+                                directionsInImgViewAndTxtView(beaconList.giveDirections(fromDirection, toDirection));
+                            }
                         }
-                        else if(i == path.size()-1){
-                            String fromDirection = beaconList.beaconNeighboursMap.get(path.get(i)).get(path.get(i-1));
-                            String toDirection = beaconList.beaconNeighboursMap.get(path.get(i-1)).get(path.get(i));
-                            directionsInImgViewAndTxtView(beaconList.giveDirections(fromDirection, toDirection));
-                        }
-                        else{
-                            String fromDirection = beaconList.beaconNeighboursMap.get(path.get(i)).get(path.get(i-1));
-                            String toDirection = beaconList.beaconNeighboursMap.get(path.get(i)).get(path.get(i+1));
-                            directionsInImgViewAndTxtView(beaconList.giveDirections(fromDirection,toDirection));
-                        }
+
                     }
+                } else if (iBeacon.getProximity().toString().equals("IMMEDIATE")){
+                    if(!(getCurrentDirectionOfMovement().equals(getCorrectDirectionOfMovement(path))) && (pathLive.size() > 1)) {
+                        directionsInImgViewAndTxtView("zawróć");
+                        setProximityMapFalse();
+                    } else {
+                        directionsInImgViewAndTxtView("prosto");
+                    }
+                }
+                if(iBeacon.getProximity().toString().equals("IMMEDIATE") && !pathLive.get(pathLive.size()-1).equals( ((Integer)iBeacon.getMinor()).toString() ) ) {
+                    pathLive.add( ((Integer)iBeacon.getMinor()).toString() );
                 }
             }
         }
     }
 
+    //When you arrive to the destination
     public void giveMorePreciseClue(){
         if(path.size() == 1){
-            directionsTextView.setText("Dotarłeś do celu!");
+            directionsTextView.setText(roomName+"\nDotarłeś do celu!");
             imageView.setImageResource(R.drawable.nowy_projekt);
-            imageView.setContentDescription("Dotarłeś do celu!");
-            waitAndGoBack();
-
+            imageView.setContentDescription("Symbol punkt na mapie");
+            stopScanning();
+            //waitAndGoBack();
         } else {
-            String toDirection = beaconList.beaconRooms.get(path.get(0)).get(roomName);
-            String fromDirection = beaconList.beaconNeighboursMap.get(path.get(1)).get(path.get(0));
+            String toDirection = beaconList.beaconRoomsDataBase.get(path.get(0)).get(roomName);
+            String fromDirection = beaconList.beaconNeighboursMapDataBase.get(path.get(1)).get(path.get(0));
+            //directionsInImgViewAndTxtViewWhenYouReachedDirection(beaconList.giveDirections(fromDirection, toDirection));
             directionsInImgViewAndTxtView(beaconList.giveDirections(fromDirection, toDirection));
         }
     }
@@ -318,7 +354,49 @@ public class Directions extends AppCompatActivity {
     public void changeFontSize(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String fontSize = sharedPreferences.getString("fontSize", "1");
-        int fontSizeVal = Integer.parseInt(fontSize);
-        directionsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,fontSizeVal*20);
+        double fontSizeVal = Double.parseDouble(fontSize);
+        //int fontSizeVal = Integer.parseInt(fontSize);
+        directionsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,(float) Math.ceil(fontSizeVal*20));
+    }
+
+    public Boolean turnOnOffAnimation(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean animationBoolean = sharedPreferences.getBoolean("animation", true);
+        return animationBoolean;
+    }
+
+    public String getCorrectDirectionOfMovement(LinkedList<String> path){
+        if(path.size()>1) {
+            String startOfPath = path.get(0);
+            String oneAfterStartOfPath = path.get(1);
+            return beaconList.beaconNeighboursMapDataBase.get(startOfPath).get(oneAfterStartOfPath);
+        }
+        return "0";
+    }
+
+    public String getCurrentDirectionOfMovement(){
+        if(pathLive.size()>1) {
+            String endOfPath = pathLive.get(pathLive.size()-1);
+            String oneBeforeEndOfPath = pathLive.get(pathLive.size() - 2);
+            if(beaconList.beaconNeighboursMapDataBase.get(endOfPath).get(oneBeforeEndOfPath)!=null) {
+                return beaconList.beaconNeighboursMapDataBase.get(endOfPath).get(oneBeforeEndOfPath);
+            } else {
+                return getCorrectDirectionOfMovement(beaconList.findPath(oneBeforeEndOfPath, endOfPath));
+            }
+        }
+        return "0";
+    }
+
+    public void setProximityMapFalse(){
+        for (int i = path.size() - 1; i >= 0; i--) {
+            //   fill proximityMap, if it value of proximity was immediate give true
+            proximityMap.put(path.get(i), false);
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        directionsTextView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
     }
 }

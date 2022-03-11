@@ -1,31 +1,41 @@
 package com.kontakt.sample.beacons;
 
 import android.util.Log;
-import android.util.Pair;
 
-import com.kontakt.sdk.android.common.profile.IBeaconDevice;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
-import kotlin.collections.IntIterator;
 
-public class BeaconList {
-    public Map<Integer, Map<Integer, String>> beaconNeighboursMap = new HashMap<Integer, Map<Integer, String>>();
-    public Map<Integer, Map<String, String>> beaconRooms = new HashMap<Integer, Map<String, String>>();
+public class BeaconList  {
+
+    //public Map<Integer, Map<Integer, String>> beaconNeighboursMap = new HashMap<Integer, Map<Integer, String>>();
+    //public Map<Integer, Map<String, String>> beaconRooms = new HashMap<Integer, Map<String, String>>();
     public Map<Integer, Double> beaconPreviousDistance = new HashMap<Integer, Double>();
     public Map<Integer, Double> beaconCurrentDistance = new HashMap<Integer, Double>();
-    public Map<Integer, Map<Integer, String> > beaconDirections = new HashMap<Integer, Map<Integer, String> >();
+    //public Map<Integer, Map<Integer, String> > beaconDirections = new HashMap<Integer, Map<Integer, String> >();
+    public HashMap<String, Map<String, String>> beaconNeighboursMapDataBase;
+    public HashMap<String, Map<String,String>> beaconRoomsDataBase;
 
 
+    //klucz baza danych
     public BeaconList(){
-        // neighbours map with the relation of directions
+        readFromDataBase("beaconNeighboursMapDataBase1", "beaconRoomsDataBase1");
+
+        /*// neighbours map with the relation of directions
         beaconNeighboursMap.put(20258, new HashMap<Integer,String>(){{put(6823,"S");}});
         beaconNeighboursMap.put(6823, new HashMap<Integer,String>(){{put(20258,"N");put(15462,"S");}});
         beaconNeighboursMap.put(15462, new HashMap<Integer,String>(){{put(6823,"N"); put(12880,"S");}});
@@ -37,20 +47,41 @@ public class BeaconList {
         beaconRooms.put(6823, new HashMap<String,String>(){{put("Pokój 2", "E");put("Pokój 7", "W");}});
         beaconRooms.put(15462, new HashMap<String,String>(){{put("Pokój 3", "E");put("Pokój 8", "W");}});
         beaconRooms.put(12880, new HashMap<String,String>(){{put("Pokój 4", "E");put("Pokój 9", "W");}});
-        beaconRooms.put(11690, new HashMap<String,String>(){{put("Pokój 5", "E");put("Pokój 10", "W");}});
+        beaconRooms.put(11690, new HashMap<String,String>(){{put("Pokój 5", "E");put("Pokój 10", "W");}});*/
+    }
 
-        //help check if user is far or close to beacon
-        beaconPreviousDistance.put(20258, 0.0);
-        beaconPreviousDistance.put(6823, 0.0);
-        beaconPreviousDistance.put(15462,0.0);
-        beaconPreviousDistance.put(11690, 0.0);
-        beaconPreviousDistance.put(12880, 0.0);
+    public void readFromDataBase(String neighboursKey, String roomsKey){
+        // Read from the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://nawigacja-w-budynku-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference myRef = database.getReference();
 
-        beaconCurrentDistance.put(20258, 0.0);
-        beaconCurrentDistance.put(6823, 0.0);
-        beaconCurrentDistance.put(15462,0.0);
-        beaconCurrentDistance.put(11690, 0.0);
-        beaconCurrentDistance.put(12880, 0.0);
+        myRef.child(neighboursKey).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(!task.isSuccessful()){
+                    Log.e("firebase", "error getting data");
+                } else {
+                    beaconNeighboursMapDataBase = (HashMap<String, Map<String, String>>) task.getResult().getValue();
+                    Log.d("firebase", "Done " );
+                }
+            }
+        });
+
+        myRef.child(roomsKey).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(!task.isSuccessful()){
+                    Log.e("firebase", "error getting data");
+                } else {
+                    beaconRoomsDataBase = (HashMap<String, Map<String,String>>) task.getResult().getValue();
+                    Log.d("firebase", "Done " );
+                }
+            }
+        });
+
+        /*//Write to database
+        DatabaseReference myRef2 = database.getReference("message");
+        myRef2.setValue("Hello, World!");*/
     }
 
     public String giveDirections(String fromDirection, String toDirection){
@@ -113,16 +144,9 @@ public class BeaconList {
         return direction;
     }
 
-    // check if user is closer to specific beacon
-    public Boolean whetherUserApproached(Integer key){
-        double firstPosition = beaconPreviousDistance.get(key);
-        double secondPosition = beaconCurrentDistance.get(key);
-        return firstPosition > secondPosition;
-    }
-
     //get minor value (key value of map) of beacon, knowing what room name is related to it
-    public Integer getKey(String roomName){
-        for (Map.Entry<Integer, Map<String,String>> keyAndValue: beaconRooms.entrySet()) {
+    public String getKey(String roomName){
+        for (Map.Entry<String, Map<String,String>> keyAndValue: beaconRoomsDataBase.entrySet()) {
 
             for (Map.Entry<String,String> roomAndDir: keyAndValue.getValue().entrySet()) {
                 if (roomName.equals(roomAndDir.getKey())) {
@@ -130,27 +154,27 @@ public class BeaconList {
                 }
             }
         }
-        return 0;
+        return "0";
     }
 
     //find path from one vertex to another in the graph(V,E)
-    public LinkedList findPath(int source, int destination) {
-        LinkedList<Integer> path = new LinkedList<Integer>();
-        if(source==destination){
+    public LinkedList findPath(String source, String destination) {
+        LinkedList<String> path = new LinkedList<String>();
+        if(source.equals(destination)){
             path.add(source);
             return path;
         }
-        Map<Integer, Integer> predecessor = new HashMap<Integer, Integer>();
-        Map<Integer, Integer> distances = new HashMap<Integer, Integer>();
+        Map<String, String> predecessor = new HashMap<String, String>();
+        Map<String, Integer> distances = new HashMap<String, Integer>();
 
         if (breadthFirstSearch(predecessor, distances, source, destination) == false){
             return new LinkedList();
         }
         //store my path
 
-        int current = destination;
+        String current = destination;
         path.add(current);
-        while (predecessor.get(current) != -1 ){
+        while ( !predecessor.get(current).equals("finish") ){
             path.add(predecessor.get(current));
             current = predecessor.get(current);
         }
@@ -158,15 +182,15 @@ public class BeaconList {
         return path;
     }
 
-    public Boolean breadthFirstSearch (Map<Integer, Integer> predecessor, Map<Integer, Integer> distances, int source, int destination ){
-        Map<Integer, Boolean> visited = new HashMap<Integer, Boolean>();
-        LinkedList<Integer> queue = new LinkedList<Integer>();
+    public Boolean breadthFirstSearch (Map<String, String> predecessor, Map<String, Integer> distances, String source, String destination ){
+        Map<String, Boolean> visited = new HashMap<String, Boolean>();
+        LinkedList<String> queue = new LinkedList<String>();
 
         //for (Map.Entry<Integer, String> keyAndValue: beaconRooms.entrySet()) {
         //for (Map.Entry<Integer, Pair<String, String>> keyAndValue: beaconRooms.entrySet()) {
-        for (Map.Entry<Integer, Map<String, String>> keyAndValue: beaconRooms.entrySet()) {
+        for (Map.Entry<String, Map<String, String>> keyAndValue: beaconRoomsDataBase.entrySet()) {
             visited.put(keyAndValue.getKey(),false);
-            predecessor.put(keyAndValue.getKey(),-1);
+            predecessor.put(keyAndValue.getKey(),"finish");
             distances.put(keyAndValue.getKey(),Integer.MAX_VALUE);
         }
 
@@ -174,29 +198,31 @@ public class BeaconList {
         distances.put(source, 0);
         queue.add(source);
 
-        List<Integer> keyList = new ArrayList<Integer>(beaconNeighboursMap.keySet());
+        List<String> keyList = new ArrayList<String>(beaconNeighboursMapDataBase.keySet());
 
         while (!queue.isEmpty()){
-            int currentVertex = queue.remove();
-            for (int key : Objects.requireNonNull(beaconNeighboursMap.get(currentVertex).keySet())) {
-                int currentVertexNeighbours = key;
-                if(!visited.get(currentVertexNeighbours)){
+            String currentVertex = queue.remove();
+            for (String key : Objects.requireNonNull(beaconNeighboursMapDataBase.get(currentVertex).keySet())) {
+                String currentVertexNeighbours = key;
+
+                if(visited.get(currentVertexNeighbours) == null){
+                    return  false;
+                }
+                else if(!visited.get(currentVertexNeighbours)){
                     visited.put(currentVertexNeighbours, true);
                     distances.put(currentVertexNeighbours, distances.get(currentVertex) + 1);
                     predecessor.put(currentVertexNeighbours, currentVertex);
                     queue.add(currentVertexNeighbours);
 
                     //when we find path
-                    if(currentVertexNeighbours == destination){
+                    if(currentVertexNeighbours.equals(destination)){
                         return true;
                     }
                 }
             }
         }
-
         return false;
     }
-
 
 }
 
